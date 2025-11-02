@@ -48,25 +48,32 @@ PermissionChecker.check('other', () => {
 PHP:
 
 ```php
-function checkCookieConsent($category) {
-    if (!isset($_COOKIE['cookie_consent'])) {
-        return false;
+class CookieConsent
+{
+    private array $permissions = [];
+
+    public function __construct()
+    {
+        $consent = $_COOKIE['cookie_consent'] ?? '';
+        $this->permissions = array_filter(explode(',', $consent));
     }
-    
-    $consent = $_COOKIE['cookie_consent'];
-    $permissions = explode(',', $consent);
-    
-    return in_array($category, $permissions);
+
+    public function hasConsent(string $category): bool
+    {
+        return in_array($category, $this->permissions, true);
+    }
 }
 
-if (checkCookieConsent('marketing')) {
+// Usage
+$consent = new CookieConsent();
+
+if ($consent->hasConsent('marketing')) {
     echo '<script src="marketing.js"></script>';
 }
 
-if (checkCookieConsent('other')) {
+if ($consent->hasConsent('other')) {
     echo '<script src="additional-features.js"></script>';
 }
-
 ```
 
 ### Открытие настроек
