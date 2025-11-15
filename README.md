@@ -36,13 +36,12 @@ El'Cookie - это компактный JavaScript плагин, который 
 
 ```javascript
 PermissionChecker.check('marketing', () => {
-  console.log('Маркетинговые cookie разрешены');
+    console.log('Маркетинговые cookie разрешены');
 });
 
 PermissionChecker.check('other', () => {
-  console.log('Дополнительные cookie разрешены');
+    console.log('Дополнительные cookie разрешены');
 });
-
 ```
 
 PHP:
