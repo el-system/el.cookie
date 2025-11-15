@@ -50,28 +50,29 @@ PHP:
 ```php
 class CookieConsent
 {
-    private array $permissions = [];
+    private static array $permissions = [];
 
-    public function __construct()
+    private static function loadPermissions(): void
     {
-        $consent = $_COOKIE['cookie_consent'] ?? '';
-        $this->permissions = array_filter(explode(',', $consent));
+        if (empty(self::$permissions)) {
+            $consent = $_COOKIE['cookie_consent'] ?? '';
+            self::$permissions = array_filter(explode(',', $consent));
+        }
     }
 
-    public function hasConsent(string $category): bool
+    public static function hasConsent(string $category): bool
     {
-        return in_array($category, $this->permissions, true);
+        self::loadPermissions();
+        return in_array($category, self::$permissions, true);
     }
 }
 
 // Usage
-$consent = new CookieConsent();
-
-if ($consent->hasConsent('marketing')) {
+if (CookieConsent::hasConsent('marketing')) {
     echo '<script src="marketing.js"></script>';
 }
 
-if ($consent->hasConsent('other')) {
+if (CookieConsent::hasConsent('other')) {
     echo '<script src="additional-features.js"></script>';
 }
 ```
