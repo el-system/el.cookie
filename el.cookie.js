@@ -17,6 +17,7 @@
         COOKIE_NAME: 'cookie_consent',
         COOKIE_EXPIRY_ALL_DAYS: 365,
         COOKIE_EXPIRY_REQUIRED_DAYS: 1,
+        RELOAD_ON_CONSENT_APPLY: false,
         API_OPEN_SETTINGS_CLASS: 'open-cookie-settings',
         LINKS: {
             policy: '/policy/'
@@ -493,6 +494,28 @@
         }
     };
 
+    const ConsentActions = {
+        apply({ permissions = [], days = CONFIG.COOKIE_EXPIRY_ALL_DAYS, restorePermissions = true } = {}) {
+            if (permissions.length > 0) {
+                CookieManager.set(CONFIG.COOKIE_NAME, permissions.join(','), days);
+            } else {
+                CookieManager.set(CONFIG.COOKIE_NAME, '', 0);
+            }
+
+            StorageManager.setConsentTimestamp();
+
+            if (restorePermissions) {
+                PermissionManager.restore();
+            } else {
+                window.checkCookiesPermission = () => false;
+            }
+
+            if (CONFIG.RELOAD_ON_CONSENT_APPLY) {
+                window.location.reload();
+            }
+        }
+    };
+
     //region CONSENT CHECK
     const ConsentManager = {
         check() {
@@ -603,17 +626,18 @@
 
             bindEvents(components) {
                 document.getElementById(config.IDS.btnAll)?.addEventListener('click', () => {
-                    const nonRequiredCategories = [CONFIG.COOKIE_CATEGORIES.MARKETING, CONFIG.COOKIE_CATEGORIES.OTHER];
-                    CookieManager.set(CONFIG.COOKIE_NAME, nonRequiredCategories.join(','), CONFIG.COOKIE_EXPIRY_ALL_DAYS);
-                    StorageManager.setConsentTimestamp();
                     this.remove();
-                    PermissionManager.restore();
+                    ConsentActions.apply({
+                        permissions: [CONFIG.COOKIE_CATEGORIES.MARKETING, CONFIG.COOKIE_CATEGORIES.OTHER]
+                    });
                 });
 
                 document.getElementById(config.IDS.btnRequired)?.addEventListener('click', () => {
-                    StorageManager.setConsentTimestamp();
                     this.remove();
-                    window.checkCookiesPermission = () => false;
+                    ConsentActions.apply({
+                        permissions: [],
+                        restorePermissions: false
+                    });
                 });
 
                 document.getElementById(config.IDS.btnSettings)?.addEventListener('click', () => {
@@ -783,11 +807,10 @@
                 }
 
                 document.getElementById(config.IDS.btnAllowAll)?.addEventListener('click', () => {
-                    const nonRequiredCategories = [CONFIG.COOKIE_CATEGORIES.MARKETING, CONFIG.COOKIE_CATEGORIES.OTHER];
-                    CookieManager.set(CONFIG.COOKIE_NAME, nonRequiredCategories.join(','), CONFIG.COOKIE_EXPIRY_ALL_DAYS);
-                    StorageManager.setConsentTimestamp();
                     this.remove();
-                    PermissionManager.restore();
+                    ConsentActions.apply({
+                        permissions: [CONFIG.COOKIE_CATEGORIES.MARKETING, CONFIG.COOKIE_CATEGORIES.OTHER]
+                    });
                 });
 
                 document.getElementById(config.IDS.btnAllowSelected)?.addEventListener('click', () => {
@@ -798,15 +821,10 @@
                     if (marketingChecked) selectedPermissions.push(CONFIG.COOKIE_CATEGORIES.MARKETING);
                     if (otherChecked) selectedPermissions.push(CONFIG.COOKIE_CATEGORIES.OTHER);
 
-                    if (selectedPermissions.length > 0) {
-                        CookieManager.set(CONFIG.COOKIE_NAME, selectedPermissions.join(','), CONFIG.COOKIE_EXPIRY_ALL_DAYS);
-                    } else {
-                        CookieManager.set(CONFIG.COOKIE_NAME, '', 0);
-                    }
-
-                    StorageManager.setConsentTimestamp();
                     this.remove();
-                    PermissionManager.restore();
+                    ConsentActions.apply({
+                        permissions: selectedPermissions
+                    });
                 });
 
                 document.getElementById(config.IDS.closeBtn)?.addEventListener('click', () => {
