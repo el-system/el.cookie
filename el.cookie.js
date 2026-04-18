@@ -106,7 +106,10 @@
                 settingsTextExpanded: generateId(),
                 buttonContainer: generateId(),
                 button: generateId(),
-                closeBtn: generateId()
+                closeBtn: generateId(),
+                slider: generateId(),
+                round: generateId(),
+                switch: generateId(),
             }
         };
 
@@ -356,7 +359,7 @@
         }
 
         /* Switch styles */
-        .switch {
+        .${SETTINGS_CONFIG.CLASSES.switch} {
             position: relative;
             display: inline-block;
             width: 50px;
@@ -365,13 +368,13 @@
             transform: translate(0);
         }
 
-        .switch input {
+        .${SETTINGS_CONFIG.CLASSES.switch} input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        .slider {
+        .${SETTINGS_CONFIG.CLASSES.slider} {
             position: absolute;
             cursor: pointer;
             top: 0;
@@ -383,7 +386,7 @@
             border-radius: 24px;
         }
 
-        .slider:before {
+        .${SETTINGS_CONFIG.CLASSES.slider}:before {
             position: absolute;
             content: "";
             height: 16px;
@@ -395,15 +398,15 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked + .${SETTINGS_CONFIG.CLASSES.slider} {
             background-color: var(--cc-color-main);
         }
 
-        input:checked + .slider:before {
+        input:checked + .${SETTINGS_CONFIG.CLASSES.slider}:before {
             transform: translateX(26px);
         }
 
-        input:disabled + .slider {
+        input:disabled + .${SETTINGS_CONFIG.CLASSES.slider} {
             opacity: 0.3;
             cursor: not-allowed;
         }
@@ -715,9 +718,9 @@
                     return `
                         <div class="${config.CLASSES.settingsBlock}" id="${config.IDS[id]}">
                             <div class="${config.CLASSES.settingsHeader}" id="${config.IDS[id] + '-header'}">
-                                <label class="switch">
+                                <label class="${config.CLASSES.switch}">
                                     <input type="checkbox" id="${config.IDS[`toggle${blockNum}`]}" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
-                                    <span class="slider round"></span>
+                                    <span class="${config.CLASSES.slider} ${config.CLASSES.round}   $"></span>
                                 </label>
                                 <span>${title}</span>
                                 <span class="${config.CLASSES.expandIcon}" id="${config.IDS[`expand${blockNum}`]}"></span>
@@ -800,7 +803,7 @@
                     });
 
                     document.getElementById(blockHeaderId)?.addEventListener('click', (e) => {
-                        if (e.target !== expandElement && !e.target.closest('.switch')) {
+                        if (e.target !== expandElement && !e.target.closest('.' + config.CLASSES.switch)) {
                             toggleText(textElementId, expandElement);
                         }
                     });
