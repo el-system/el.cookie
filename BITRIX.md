@@ -67,10 +67,7 @@ $hasOtherConsent     = CookieConsent::hasConsent('other');
 
 if ($hasMarketingConsent) {
     $asset->addString('
-    <!-- Marketing counter -->
-    <script src="/local/js/marketing-counter.js" defer></script>
+    <script src="counter.js" defer></script>
     ');
 }
 ```
-
-> Аналогично можно проверять и другие категории перед подключением любых внешних скриптов.
