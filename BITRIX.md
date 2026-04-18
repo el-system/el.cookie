@@ -26,7 +26,7 @@ use Bitrix\Main\Application;
 
 final class CookieConsent
 {
-    private const COOKIE_NAME = 'BITRIX_SM_cookie_consent';
+    private const COOKIE_NAME = 'cookie_consent';
     private static array $permissions = [];
     private static bool $loaded = false;
 
@@ -54,6 +54,7 @@ final class CookieConsent
         return in_array($category, self::$permissions, true);
     }
 }
+
 ```
 
 ## Примеры использования
