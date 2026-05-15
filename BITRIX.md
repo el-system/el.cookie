@@ -66,8 +66,6 @@ $hasMarketingConsent = CookieConsent::hasConsent('marketing');
 $hasOtherConsent     = CookieConsent::hasConsent('other');
 
 if ($hasMarketingConsent) {
-    $asset->addString('
-    <script src="counter.js" defer></script>
-    ');
+    $asset->addString('<script src="counter.js" async></script>');
 }
 ```
