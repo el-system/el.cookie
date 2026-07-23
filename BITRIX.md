@@ -57,7 +57,7 @@ final class CookieConsent
 
 ```
 
-## Примеры использования
+## Пример использования
 
 ```php
 use App\Context\CookieConsent;
